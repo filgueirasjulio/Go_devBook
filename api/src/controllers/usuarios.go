@@ -6,12 +6,30 @@ import (
 	"api/src/repositorios"
 	"api/src/respostas"
 	"encoding/json"
+	
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func ListarUsuarios(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Listando usuários..."))
+	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
+
+	db, erro := banco.Conectar()
+	if erro != nil {
+			respostas.Erro(w, http.StatusInternalServerError, erro)
+			return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	usuarios, erro := repositorio.Listar(nomeOuNick)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusCreated, usuarios)
 }
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
@@ -49,10 +67,8 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	respostas.JSON(w, http.StatusCreated, usuario)
 }
 
-
-
-func ExibirUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Exibindo usuário..."))
+func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Buscando usuário..."))
 }
 
 func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
