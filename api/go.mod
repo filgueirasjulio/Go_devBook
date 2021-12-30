@@ -3,6 +3,7 @@ module api
 go 1.17
 
 require (
+	github.com/badoux/checkmail v1.2.1 // indirect
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/githubnemo/CompileDaemon v1.4.0 // indirect
