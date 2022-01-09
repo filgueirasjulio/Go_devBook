@@ -36,14 +36,14 @@ func ListarUsuarios(w http.ResponseWriter, r *http.Request) {
 }
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
-	corpoRequest, erro := ioutil.ReadAll(r.Body)
+	corpoRequesicao, erro := ioutil.ReadAll(r.Body)
 	if erro != nil {
 		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
 		return
 	}
 
 	var usuario modelos.Usuario
-	if erro = json.Unmarshal(corpoRequest, &usuario); erro != nil {
+	if erro = json.Unmarshal(corpoRequesicao, &usuario); erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
 		return
 	}
