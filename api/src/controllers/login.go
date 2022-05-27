@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"api/src/autenticacao"
 	"api/src/banco"
 	"api/src/modelos"
 	"api/src/repositorios"
@@ -17,7 +18,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
 		return
 	}
-	
+
 	var usuario modelos.Usuario
 	if erro = json.Unmarshal(corpoRequisicao, &usuario); erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
@@ -43,5 +44,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Você está logado! Parabéns"))
+	token, _ := autenticacao.CriarToken(usuarioSalvoNoBanco.ID)
+
+	w.Write([]byte("token: "))
+	w.Write([]byte([]byte(token)))
 }
