@@ -16,19 +16,19 @@ func NovoRepositorioDeUsuarios(db *sql.DB) *Usuarios {
 
 func (repositorio Usuarios) Criar(usuario modelos.Usuario) (uint64, error) {
 	statement, erro := repositorio.db.Prepare("insert into usuarios (nome, nick, email, senha) values(?, ?, ?, ?)")
-	if erro != nil  {
-		return 0, erro 
+	if erro != nil {
+		return 0, erro
 	}
 	defer statement.Close()
-  
+
 	resultado, erro := statement.Exec(usuario.Nome, usuario.Nick, usuario.Email, usuario.Senha)
-	if erro != nil  {
-		return 0, erro 
+	if erro != nil {
+		return 0, erro
 	}
 
 	ultimoIDInserido, erro := resultado.LastInsertId()
-	if erro != nil  {
-		return 0, erro 
+	if erro != nil {
+		return 0, erro
 	}
 
 	return uint64(ultimoIDInserido), nil
@@ -38,12 +38,12 @@ func (repositorio Usuarios) Listar(nomeOuNick string) ([]modelos.Usuario, error)
 	nomeOuNick = fmt.Sprintf("%%%s%%", nomeOuNick)
 
 	linhas, erro := repositorio.db.Query("SELECT id, nome, nick, email, criadoEm from usuarios where nome LIKE ? or nick LIKE ?",
-					nomeOuNick, nomeOuNick)
+		nomeOuNick, nomeOuNick)
 
 	if erro != nil {
 		return nil, erro
 	}
-	
+
 	defer linhas.Close()
 
 	var usuarios []modelos.Usuario
@@ -74,7 +74,7 @@ func (repositorio Usuarios) BuscarPorId(ID uint64) (modelos.Usuario, error) {
 	)
 
 	if erro != nil {
-		return modelos.Usuario{}, erro 
+		return modelos.Usuario{}, erro
 	}
 	defer linhas.Close()
 
@@ -113,8 +113,8 @@ func (repositorio Usuarios) Deletar(ID uint64) error {
 	statement, erro := repositorio.db.Prepare("delete from usuarios where id = ?")
 	if erro != nil {
 		return erro
-	} 
-		defer statement.Close()
+	}
+	defer statement.Close()
 
 	if _, erro = statement.Exec(ID); erro != nil {
 		return erro
@@ -139,4 +139,20 @@ func (repositorio Usuarios) BuscaPorEmail(email string) (modelos.Usuario, error)
 	}
 
 	return usuario, nil
+}
+
+func (repositorio Usuarios) Seguir(usuarioID, seguidorID uint64) error {
+	statment, erro := repositorio.db.Prepare(
+		"insert ignore into seguidores (usuario_id, seguidor_id) values (?, ?)")
+	if erro != nil {
+		return erro
+	}
+
+	defer statment.Close()
+
+	if _, erro = statment.Exec(usuarioID, seguidorID); erro != nil {
+		return erro
+	}
+
+	return erro
 }
