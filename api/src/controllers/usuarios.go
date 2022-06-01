@@ -314,6 +314,7 @@ func AtualizarSenha(w http.ResponseWriter, r *http.Request) {
 	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
 	}
 
 	if usuarioIdNoToken != usuarioID {
